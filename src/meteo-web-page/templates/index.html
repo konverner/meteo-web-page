@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo Data</title>
+    <title>Уровень воды в Горном</title>
     <style>
         table {
             width: 100%;
@@ -19,21 +19,27 @@
         th {
             background-color: #f2f2f2;
         }
+        .last-update {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
     </style>
 </head>
 <body>
-    <h1>Meteo Data</h1>
+    <h1>Уровень воды в Горном</h1>
     <table id="data-table">
         <thead>
             <tr>
-                <th>Time</th>
-                <th>Level (cm)</th>
+                <th>Время</th>
+                <th>Уровень (см)</th>
             </tr>
         </thead>
         <tbody>
             <!-- Data will be populated here -->
         </tbody>
     </table>
+    <div class="last-update" id="last-update">Последние обновление: ...</div>
     <script>
         async function fetchData() {
             const response = await fetch('/data');
@@ -43,13 +49,32 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 const tdTime = document.createElement('td');
-                tdTime.textContent = row[0];
+                tdTime.textContent = formatDateTime(row[0]);
                 const tdLevel = document.createElement('td');
                 tdLevel.textContent = row[1];
                 tr.appendChild(tdTime);
                 tr.appendChild(tdLevel);
                 tableBody.appendChild(tr);
             });
+            updateLastUpdateTime();
+        }
+
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('en-GB', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
+        function updateLastUpdateTime() {
+            const lastUpdateDiv = document.getElementById('last-update');
+            const now = new Date();
+            const formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            lastUpdateDiv.textContent = `Последние обновление: ${formattedTime}`;
         }
 
         fetchData();

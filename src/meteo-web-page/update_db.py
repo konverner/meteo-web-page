@@ -70,7 +70,7 @@ def save_to_db(conn, doc_id, doc_content):
         ))
         conn.commit()
     except sqlite3.IntegrityError:
-        print(f"Document with id {doc_content['head']['id']} already exists in the database. Skipping.")
+        print(f"Document with id {doc_id} already exists in the database. Skipping.")
 
 
 def main():
