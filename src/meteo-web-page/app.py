@@ -1,8 +1,13 @@
 from flask import Flask, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
+import logging
 
 app = Flask(__name__)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def fetch_data():
     connection = None
@@ -17,13 +22,15 @@ def fetch_data():
             cursor = connection.cursor()
             cursor.execute('SELECT time, level FROM documents')
             rows = cursor.fetchall()
+            logger.info("Data fetched from the database successfully.")
             return rows
     except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
+        logger.error(f"Error while connecting to MySQL: {e}")
     finally:
         if connection and connection.is_connected():
             cursor.close()
             connection.close()
+            logger.info("Database connection closed.")
     return []
 
 @app.route('/data')
