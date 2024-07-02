@@ -20,9 +20,15 @@ def fetch_data():
         )
         if connection.is_connected():
             cursor = connection.cursor()
-            cursor.execute('SELECT time, level FROM documents')
+            cursor.execute('SELECT time, level FROM documents ORDER BY time DESC LIMIT 20')
             rows = cursor.fetchall()
-            logger.info("Data fetched from the database successfully.")
+            if rows:
+                times = [row[0] for row in rows]
+                min_time = min(times)
+                max_time = max(times)
+                logger.info(f"Data fetched from the database successfully. Period: {min_time} to {max_time}")
+            else:
+                logger.info("No data fetched from the database.")
             return rows
     except Error as e:
         logger.error(f"Error while connecting to MySQL: {e}")
