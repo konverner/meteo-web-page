@@ -10,10 +10,14 @@ COPY pyproject.toml README.md /app/
 # Copy the .env file into the container
 COPY .env /app/
 
-# Install dependencies
-RUN pip install --upgrade pip \
-    && pip install setuptools \
-    && pip install --no-cache-dir -r <(python -c "import toml; print('\n'.join(toml.load('pyproject.toml')['dependencies']))")
+# Install build dependencies
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install project dependencies
+RUN pip install --no-cache-dir .
+
+# Install optional dependencies if needed
+RUN pip install --no-cache-dir .
 
 # Copy the rest of the application code into the container
 COPY . /app
