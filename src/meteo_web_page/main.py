@@ -1,15 +1,8 @@
 from flask import Flask, jsonify, render_template
-import sqlite3
+
+from db.database import fetch_data
 
 app = Flask(__name__)
-
-def fetch_data():
-    conn = sqlite3.connect('meteo_data.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT time, level FROM documents')
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
 
 @app.route('/data')
 def data():
