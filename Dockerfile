@@ -26,8 +26,8 @@ COPY . /app
 EXPOSE 5000
 
 # Define environment variable
-ENV FLASK_APP=app.py
+ENV FLASK_APP=main.py
 ENV FLASK_ENV=production
 
 # Command to run the application
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["python", "src/meteo_web_page/main.py"]
