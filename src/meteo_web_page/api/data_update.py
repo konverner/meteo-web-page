@@ -4,7 +4,7 @@ import time
 import logging
 from dotenv import load_dotenv
 
-from meteo_web_page.db.database import init_db, save_to_db
+from db.database import init_db, save_to_db
 
 # Load environment variables from .env file
 load_dotenv()
