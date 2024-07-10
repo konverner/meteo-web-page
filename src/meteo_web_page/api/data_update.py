@@ -1,4 +1,4 @@
-# meteo-web-page/src/meteo_web_page/api/data_update.py
+import os
 import requests
 import time
 import logging
