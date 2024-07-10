@@ -1,3 +1,4 @@
+# meteo-web-page/src/meteo_web_page/api/data_update.py
 import requests
 import time
 import logging
@@ -31,7 +32,7 @@ def delete_doc(api_key, doc_id):
     response.raise_for_status()
     return response.json()
 
-def main():
+def update_database():
     api_key = API_KEY
     conn = init_db()
 
@@ -47,11 +48,10 @@ def main():
             delete_doc(api_key, doc_id)
             logger.info(f"Document with id {doc_id} processed and deleted.")
             time.sleep(0.2)  # To avoid hitting the API rate limit
-        
     finally:
         if conn and conn.is_connected():
             conn.close()
             logger.info("Database connection closed.")
 
 if __name__ == "__main__":
-    main()
+    update_database()
