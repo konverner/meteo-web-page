@@ -2,11 +2,15 @@
 import requests
 import time
 import logging
+from dotenv import load_dotenv
 
 from meteo_web_page.db.database import init_db, save_to_db
 
-API_KEY = "C1B221F5B67ACA22D9874D36C57799F4"
-BASE_URL = 'https://api.meteo.nw.ru/api'
+# Load environment variables from .env file
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
+BASE_URL = os.getenv("BASE_URL")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
