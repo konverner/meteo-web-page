@@ -20,7 +20,7 @@ def index():
 def update_database_periodically():
     while True:
         update_database()
-        time.sleep(120)  # Sleep for 2 minutes
+        time.sleep(30)  # Sleep for 30 seconds
 
 if __name__ == "__main__":
     update_thread = threading.Thread(target=update_database_periodically, daemon=True)
