@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Уровень воды в Горном</title>
+    <title>Метеоданные СПб</title>
     <style>
         table {
             width: 100%;
@@ -27,12 +27,14 @@
     </style>
 </head>
 <body>
-    <h1>Уровень воды в Горном</h1>
+    <h1>Метеоданные СПб</h1>
     <table id="data-table">
         <thead>
             <tr>
                 <th>Время</th>
-                <th>Уровень (см)</th>
+                <th>Уровень воды в Неве (см)</th>
+                <th>Скорость ветра (м/с)</th>
+                <th>Направление ветра (градусы)</th>
             </tr>
         </thead>
         <tbody>
@@ -52,8 +54,14 @@
                 tdTime.textContent = formatDateTime(row[0]);
                 const tdLevel = document.createElement('td');
                 tdLevel.textContent = row[1];
+                const tdWindSpeed = document.createElement('td');
+                tdWindSpeed.textContent = row[2];
+                const tdWindDirection = document.createElement('td');
+                tdWindDirection.textContent = row[3];
                 tr.appendChild(tdTime);
                 tr.appendChild(tdLevel);
+                tr.appendChild(tdWindSpeed);
+                tr.appendChild(tdWindDirection);
                 tableBody.appendChild(tr);
             });
             updateLastUpdateTime();
