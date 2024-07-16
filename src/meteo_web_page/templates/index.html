@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Метеоданные СПб</title>
+    <title>Уровень воды в Горном</title>
     <style>
         table {
             width: 100%;
@@ -27,14 +27,12 @@
     </style>
 </head>
 <body>
-    <h1>Метеоданные СПб</h1>
+    <h1>Уровень воды в Горном</h1>
     <table id="data-table">
         <thead>
             <tr>
                 <th>Время</th>
-                <th>Уровень воды в Неве (см)</th>
-                <th>Скорость ветра (м/с)</th>
-                <th>Направление ветра (градусы)</th>
+                <th>Уровень (см)</th>
             </tr>
         </thead>
         <tbody>
@@ -54,14 +52,8 @@
                 tdTime.textContent = formatDateTime(row[0]);
                 const tdLevel = document.createElement('td');
                 tdLevel.textContent = row[1];
-                const tdWindSpeed = document.createElement('td');
-                tdWindSpeed.textContent = row[2];
-                const tdWindDirection = document.createElement('td');
-                tdWindDirection.textContent = row[3];
                 tr.appendChild(tdTime);
                 tr.appendChild(tdLevel);
-                tr.appendChild(tdWindSpeed);
-                tr.appendChild(tdWindDirection);
                 tableBody.appendChild(tr);
             });
             updateLastUpdateTime();
@@ -74,7 +66,7 @@
             const year = date.getFullYear();
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
-            
+
             return `${day}.${month}.${year} ${hours}:${minutes}`;
         }
 

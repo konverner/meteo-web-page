@@ -1,10 +1,9 @@
-import logging
 import os
+import logging
 
 import mysql.connector
-import pandas as pd
-from dotenv import load_dotenv
 from mysql.connector import Error
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,14 +25,21 @@ def init_db():
         if connection and connection.is_connected():
             cursor = connection.cursor()
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS meteo_observations (
-                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                    datetime TEXT,
-                    level REAL,
-                    wind_speed REAL,
-                    wind_direction REAL
+                CREATE TABLE IF NOT EXISTS documents (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    created DATETIME,
+                    about TEXT,
+                    title TEXT,
+                    location TEXT,
+                    time DATETIME,
+                    `localtime` DATETIME,
+                    level FLOAT,
+                    level_units TEXT,
+                    object_id INT,
+                    object_title TEXT,
+                    object_type TEXT
                 )
-                ''')
+            ''')
             connection.commit()
             logger.info("Database initialized successfully.")
             return connection
@@ -53,13 +59,7 @@ def fetch_data():
         )
         if connection.is_connected():
             cursor = connection.cursor()
-            # Update the query to select all required fields
-            cursor.execute('''
-                SELECT datetime, level, wind_speed, wind_direction
-                FROM meteo_observations
-                ORDER BY datetime DESC
-                LIMIT 20
-            ''')
+            cursor.execute('SELECT time, level FROM documents ORDER BY time DESC LIMIT 20')
             rows = cursor.fetchall()
             if rows:
                 times = [row[0] for row in rows]
@@ -79,51 +79,29 @@ def fetch_data():
     return []
 
 # Function to save document content to the database
-def save_to_db(conn, df: pd.DataFrame):
+def save_to_db(conn, doc_id, doc_content):
     if conn and conn.is_connected():
-        #df.to_sql('meteo_observations', conn, if_exists='replace', index=False)
         cursor = conn.cursor()
-        for row in df.itertuples(index=False):
+        try:
             cursor.execute('''
-                INSERT INTO meteo_observations (
-                    datetime,
-                    level,
-                    wind_speed,
-                    wind_direction
-                ) VALUES (%s, %s, %s, %s)
+                INSERT INTO documents (
+                    id, created, about, title, location, time, `localtime`, level, level_units, object_id, object_title, object_type
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
-                row.datetime,
-                row.level,
-                row.wind_speed,
-                row.wind_direction
+                doc_id,
+                doc_content['head']['created'],
+                doc_content['head']['about'],
+                doc_content['head']['title'],
+                doc_content['content']['30520'],
+                doc_content['content']['time'],
+                doc_content['content']['localtime'],
+                doc_content['content']['level'],
+                doc_content['content']['level_units'],
+                doc_content['content']['object'],
+                doc_content['content']['object_title'],
+                doc_content['content']['object_type']
             ))
-        conn.commit()
-        logger.info(f"{df.shape[0]} observations saved to the database.")
-
-
-def drop_table(table_name: str):
-    """Drop the specified table from the database.
-
-    Args:
-        table_name (str): The name of the table to drop.
-    """
-    try:
-        connection = mysql.connector.connect(
-            host=os.getenv('DB_HOST'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD'),
-            database=os.getenv('DB_DATABASE')
-        )
-        if connection and connection.is_connected():
-            cursor = connection.cursor()
-            drop_query = f"DROP TABLE IF EXISTS {table_name}"
-            cursor.execute(drop_query)
-            connection.commit()
-            logger.info(f"Table '{table_name}' dropped successfully.")
-    except Error as e:
-        logger.error(f"Error while connecting to MySQL: {e}")
-    finally:
-        if connection and connection.is_connected():
-            cursor.close()
-            connection.close()
-            logger.info("Database connection closed.")
+            conn.commit()
+            logger.info(f"Document with id {doc_id} saved to the database.")
+        except mysql.connector.IntegrityError:
+            logger.warning(f"Document with id {doc_id} already exists in the database. Skipping.")
